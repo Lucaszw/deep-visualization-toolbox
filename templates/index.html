@@ -1,0 +1,293 @@
+<link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+<script type="text/javascript" src="/static/js/underscore.min.js"></script>
+<script type="text/javascript" src="/static/js/socket.io.js"></script>
+<script type="text/javascript" src="/static/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
+
+<style>
+
+  .caffevis {
+    /* Overflow hidden so that text remains inside buttons */
+    overflow: hidden;
+  }
+
+  #img {
+    width: 100%;
+  }
+
+  /*h3 overided so that it works well with buttons inside the
+  panel header*/
+  .panel-heading h3 {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: normal;
+      width: 75%;
+      padding-top: 8px;
+  }
+
+</style>
+
+<!-- #### SETTINGS FORM ###### -->
+<!-- Contains properties passed in as Settings JSON variable before
+launching the toolbox -->
+
+<!-- Each form field contains a 'name' attribute. This is the
+key representing the field in the settings JSON object-->
+
+<div class="panel-group"  role="tablist" aria-multiselectable="true">
+  <div class="panel panel-default" id="accordion">
+    <div class="panel-heading" role="tab" id="headingOne">
+      <h3 class="panel-title pull-left">
+        <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+          Change Settings
+        </a>
+      </h3>
+      <button class="btn btn-success pull-left" id="start_toolbox" type="button">Start Toolbox</button>
+      <button class="btn btn-danger pull-left" id="stop_toolbox"  type="button">Stop Toolbox</button>
+      <div class="clearfix"></div>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+      <div class="panel-body">
+        <form class="form-horizontal row" id="settings_local" >
+          <div class="col-md-6">
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Caffe Root</label>
+              <div class="col-sm-10">
+                <input name="caffevis_caffe_root" class="form-control">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Prototxt File</label>
+              <div class="col-sm-10">
+                <input name="caffevis_deploy_prototxt" class="form-control">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Network Weights</label>
+              <div class="col-sm-10">
+                <input name="caffevis_network_weights" class="form-control">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Data Mean</label>
+              <div class="col-sm-10">
+                <input name="caffevis_data_mean" class="form-control">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Labels</label>
+              <div class="col-sm-10">
+                <input name="caffevis_labels" class="form-control">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Label Layers</label>
+              <div class="col-sm-10">
+                <input name="caffevis_label_layers" class="form-control">
+              </div>
+            </div>
+
+          </div>
+          <div class="col-md-6">
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Prob Layer</label>
+              <div class="col-sm-10">
+                <input name="caffevis_prob_layer" class="form-control">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Unit JPG Directory</label>
+              <div class="col-sm-10">
+                <input name="caffevis_unit_jpg_dir" class="form-control">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">JPG Visible Layers</label>
+              <div class="col-sm-10">
+                <input name="caffevis_jpgvis_layers" class="form-control">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">JPG Vis. Remap</label>
+              <div class="col-sm-10">
+                <input name="caffevis_jpgvis_remap" class="form-control">
+              </div>
+            </div>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </div>
+
+<!-- #### Toolkit Panel ###### -->
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <!-- Panel Controls -->
+    <button class="btn btn-default pull-left" id="handle_help"  type="button">Help</button>
+    <button class="btn btn-default pull-left" id="handle_prev"  type="button">Previous Image</button>
+    <button class="btn btn-default pull-left" id="handle_next"  type="button">Next Image</button>
+    <div class="clearfix"></div>
+  </div>
+  <div class="panel-body">
+    <div class="row">
+
+      <div class="col-xs-2">
+        <div class="list-group">
+          <!-- Toolbox Controls (Caffevis) -->
+          <a class="list-group-item caffevis"  data-tag="sel_layer_left" type="button">Previous Layer</a>
+          <a class="list-group-item caffevis"  data-tag="sel_layer_right" type="button">Next Layer</a>
+          <a class="list-group-item caffevis"  data-tag="zoom_mode" type="button">Toggle Zoom</a>
+          <a class="list-group-item caffevis"  data-tag="pattern_mode" type="button">Toggle Input Pattern Overlay</a>
+          <a class="list-group-item caffevis"  data-tag="ez_back_mode_loop" type="button">Change Backprop/Deconv Mode</a>
+          <a class="list-group-item caffevis"  data-tag="freeze_back_unit" type="button">Freeze Backprop/Deconv Origin</a>
+          <a class="list-group-item caffevis"  data-tag="show_back" type="button">Toggle Forward/Backward Activations</a>
+          <a class="list-group-item caffevis"  data-tag="back_mode" type="button">Change Back Mode</a>
+          <a class="list-group-item caffevis"  data-tag="back_filt_mode" type="button">Change Back Output Filter</a>
+          <a class="list-group-item caffevis"  data-tag="boost_gamma" type="button">Change Gamma Correction</a>
+          <a class="list-group-item caffevis"  data-tag="boost_individual" type="button">Change Color Range</a>
+          <a class="list-group-item caffevis"  data-tag="reset_state" type="button">Reset</a>
+        </div>
+      </div>
+
+      <div class="col-xs-10">
+        <!-- The image data sent from the toolbox is loaded into this div -->
+        <img id="img" src="" />
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<script>
+  $(document).ready(function(){
+
+    var socket = io.connect('http://' + document.domain + ':' + location.port);
+    var toolkitActive = false;
+
+    // On Connect, fill the default data stored in settings.json
+    socket.on('has connected',function(msg){
+      _.each(msg.data, function(val,key){
+        $("input[name='"+key+"']").val(val);
+      });
+    });socket.emit('connect',  {data: "help" })
+
+    // Listen for request to repaint the panel
+    socket.on('re-draw panel', function(msg) {
+      document.getElementById('img').setAttribute( 'src', 'data:image/png;base64,'+msg.data);
+    });
+
+
+    $("#handle_help").on('click', function(){socket.emit('mode changed',  {data: "help" })});
+    $("#handle_prev").on('click', function(){socket.emit('mode changed',  {data: "static_file_decrement" })});
+    $("#handle_next").on('click', function(){socket.emit('mode changed',  {data: "static_file_increment" })});
+    $("#start_toolbox").on('click',function(){
+      var f = $("#settings_local").serializeArray();
+      var data = _.object(_.pluck(f,"name"),_.pluck(f,"value"));
+      console.log(data);
+      socket.emit('start toolbox',data);
+    });
+    $("#stop_toolbox").on('click',function(){socket.emit('stop toolbox',{}) });
+
+
+    // The data-tag attribute attatched to the control buttons is the same
+    // as those located in bindings.py. Simulated a key press event
+    // in the toolbox
+    $(".caffevis").on('click',function(event){
+      socket.emit('key pressed', {data: event.target.dataset.tag });
+    });
+
+    // If the image panel is clicked overide the default keyboad actions
+    // to match the shortcuts in the deep learning toolbox (an alternative)
+    // to the buttons in the side bar
+    $("#img").on('click',function() {toolkitActive = true});
+
+    // Disable sockets when a div in the accordion panel is being pressed
+    // as they are likely trying to fill out a form
+    $("#accordion").on('click',function() {toolkitActive = false});
+    $(document).keydown(function(event) {
+      if (toolkitActive){
+        event.preventDefault();
+        socket.emit('key pressed', {data: get_tag(event.keyCode) });
+      }
+    });
+
+    // get_tag method converts the javascript keycode of the shortcuts
+    // into their equivolent tag listed in bindings.py
+    function get_tag(keycode){
+      switch (keycode) {
+        case 72:
+          return "help_mode"
+          break;
+        case 69:
+          return "static_file_increment"
+          break;
+        case 87:
+          return "static_file_decrement"
+          break;
+        case 85:
+          return "sel_layer_left"
+          break;
+        case 79:
+          return "sel_layer_right"
+          break;
+        case 90:
+          return "zoom_mode"
+          break;
+        case 83:
+          return "pattern_mode"
+          break;
+        case 66:
+          return "ez_back_mode_loop"
+          break;
+        case 68:
+          return "freeze_back_unit"
+          break;
+        case 65:
+          return "show_back"
+          break;
+        case 78:
+          return "back_mode"
+          break;
+        case 77:
+          return "back_filt_mode"
+          break;
+        case 84:
+          return "boost_gamma"
+          break;
+        case 16:
+          return "boost_individual"
+          break;
+        case 27:
+          return "reset_state"
+          break;
+        case 38:
+          return "sel_up"
+          break;
+        case 39:
+          return "sel_right"
+          break;
+        case 40:
+          return "sel_down"
+          break;
+        case 37:
+          return "sel_left"
+          break;
+        default:
+          return "none"
+      }
+    }
+
+  });
+</script>

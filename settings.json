@@ -1,0 +1,12 @@
+{
+  "caffevis_caffe_root":"/root/Documents/caffes/caffe-dlt",
+  "caffevis_deploy_prototxt":"/root/Documents/deep-visualization-toolbox/models/caffenet-yos/caffenet-yos-deploy.prototxt",
+  "caffevis_network_weights":"/root/Documents/deep-visualization-toolbox/models/caffenet-yos/caffenet-yos-weights",
+  "caffevis_data_mean":"/root/Documents/deep-visualization-toolbox/models/caffenet-yos/ilsvrc_2012_mean.npy",
+  "caffevis_labels":"/root/Documents/deep-visualization-toolbox/models/caffenet-yos/ilsvrc_2012_labels.txt",
+  "caffevis_label_layers":"fc8,prob",
+  "caffevis_prob_layer":"prob",
+  "caffevis_jpgvis_layers":"conv1, conv2, conv3, conv4, conv5, fc6, fc7, fc8, prob",
+  "caffevis_unit_jpg_dir":"/root/Documents/deep-visualization-toolbox/models/caffenet-yos/unit_jpg_vis",
+  "caffevis_jpgvis_remap":"pool1: conv1, pool2: conv2, pool5: conv5"
+}
